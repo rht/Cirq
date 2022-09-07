@@ -835,6 +835,29 @@ def test_r_gate():
     assert parsed_qasm.qregs == {'q': 1}
 
 
+def test_cp_gate():
+    qasm = """
+     OPENQASM 2.0;
+     include "qelib1.inc";
+     qreg q[2];
+     cp(pi/2) q[1],q[0];
+"""
+    parser = QasmParser()
+
+    q_0 = cirq.NamedQubit('q_0')
+    q_1 = cirq.NamedQubit('q_1')
+
+    expected_circuit = Circuit()
+    expected_circuit.append(cirq.cphase(np.pi / 2)(q_0, q_1))
+
+    parsed_qasm = parser.parse(qasm)
+
+    assert parsed_qasm.supportedFormat
+    assert parsed_qasm.qelib1Include
+
+    ct.assert_same_circuits(parsed_qasm.circuit, expected_circuit)
+
+
 @pytest.mark.parametrize(
     'qasm_gate',
     ['id', 'u2', 'u3', 'r'] + [g[0] for g in rotation_gates] + [g[0] for g in single_qubit_gates],

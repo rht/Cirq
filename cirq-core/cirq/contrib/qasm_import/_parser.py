@@ -19,7 +19,7 @@ import numpy as np
 import sympy
 from ply import yacc
 
-from cirq import ops, Circuit, NamedQubit, CX
+from cirq import ops, Circuit, NamedQubit, CX, cphase
 from cirq.circuits.qasm_output import QasmUGate
 from cirq.contrib.qasm_import._lexer import QasmLexer
 from cirq.contrib.qasm_import.exception import QasmException
@@ -250,6 +250,9 @@ class QasmParser:
         'ccx': QasmGateStatement(qasm_gate='ccx', num_params=0, num_args=3, cirq_gate=ops.CCX),
         'sdg': QasmGateStatement(qasm_gate='sdg', num_params=0, num_args=1, cirq_gate=ops.S**-1),
         'tdg': QasmGateStatement(qasm_gate='tdg', num_params=0, num_args=1, cirq_gate=ops.T**-1),
+        'cp': QasmGateStatement(
+            qasm_gate='cp', num_params=1, num_args=2, cirq_gate=(lambda params: cphase(*params))
+        ),
     }
 
     all_gates = {**basic_gates, **qelib_gates}
